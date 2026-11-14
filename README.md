@@ -1,10 +1,33 @@
 # events
 
-Business events around Bandung (and Jakarta when worth the trip) where a software
-engineer can meet business owners: UMKM, exporters/importers, manufacturing,
-property/finance/franchise. Built for finding clients, not tech meetups.
+A list of upcoming business events around Bandung, and Jakarta when worth the trip,
+for one goal: **meeting more people who could become clients** for custom business
+software.
 
 **Live list:** https://nandazman.github.io/events/
+
+## Purpose
+
+I'm a software engineer. Tech meetups are full of other engineers; business events
+are full of the people who actually have problems software can solve, and an
+engineer in that room is rare and remembered. This repo finds those rooms.
+
+**Who I want to meet**
+- **Buyers:** owners, founders, directors and managers of businesses that could pay
+  for custom software: UMKM/SME, exporters/importers, manufacturing, property,
+  finance and franchise.
+- **Referrers:** people who can introduce me to buyers: association and community
+  heads (HIPMI, KADIN, TDA, IWAPI, API), business consultants and coaches, bank
+  relationship managers, government program officers.
+
+**Which events count:** only ones **anyone can join**.
+- **Open:** anyone can register, free or paid.
+- **Apply:** anyone can apply and the organizer selects (coaching cohorts, business
+  matching). Shown with an "Apply, selection" flag.
+- Not listed: members-only, invite-only, or restricted to a group I can't belong to.
+
+At each event the approach is problem discovery first (is the pain cost or
+revenue?), and a pitch only if there's real pain.
 
 ## How it works
 
@@ -16,10 +39,6 @@ In Claude Code, from this folder, say **"find event"** (or "cari event").
    every event on organizer and ticket pages, scores it for client potential, and
    writes networking prep. `scripts/merge_scans.py` merges them into
    `scans/<date>/events.json`.
-
-Only events anyone can join are listed: open registration, or open application
-where the organizer selects (flagged). The goal is meeting potential clients:
-business owners who could buy, and people who can refer them.
 2. The skill logs the events locally, builds the viewers, then commits and pushes.
 3. GitHub Pages serves `docs/index.html`.
 
