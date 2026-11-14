@@ -10,10 +10,16 @@ property/finance/franchise. Built for finding clients, not tech meetups.
 
 In Claude Code, from this folder, say **"find event"** (or "cari event").
 
-1. The `find-event` skill (`.claude/skills/find-event/`) dispatches the
-   `event-scanner` subagent (`.claude/agents/event-scanner.md`), which searches the
-   web, checks every event on organizer and ticket pages, scores it for client
-   potential, writes networking prep, and saves `scans/<date>/events.json`.
+1. The `find-event` skill (`.claude/skills/find-event/`) runs four `event-scanner`
+   subagents in parallel (`.claude/agents/event-scanner.md`), one per location:
+   Bandung, Jabodetabek, other West Java, online. Each searches the web, checks
+   every event on organizer and ticket pages, scores it for client potential, and
+   writes networking prep. `scripts/merge_scans.py` merges them into
+   `scans/<date>/events.json`.
+
+Only events anyone can join are listed: open registration, or open application
+where the organizer selects (flagged). The goal is meeting potential clients:
+business owners who could buy, and people who can refer them.
 2. The skill logs the events locally, builds the viewers, then commits and pushes.
 3. GitHub Pages serves `docs/index.html`.
 

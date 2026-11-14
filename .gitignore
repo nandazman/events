@@ -11,3 +11,7 @@ scans/viewer.html
 
 # Local Claude settings
 .claude/settings.local.json
+
+# Per-region scanner output; only the merged events.json is published
+scans/*/*.json
+!scans/*/events.json

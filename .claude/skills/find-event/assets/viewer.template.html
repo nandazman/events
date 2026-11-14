@@ -367,6 +367,7 @@
       '<div class="pills">' + worthPill(e) + (cat ? '<span class="pill">' + esc(cat) + "</span>" : "") +
         (e.format ? '<span class="pill">' + esc(e.format) + "</span>" : "") +
         (e.price_flag ? '<span class="pill p-warn">Pricey</span>' : "") +
+        (e.access === "apply" ? '<span class="pill p-warn" title="' + esc(e.access_note || "") + '">Apply, selection</span>' : "") +
         (e.verified === false ? '<span class="pill p-warn">Partly unverified</span>' : "") +
         (st ? '<span class="pill ' + st[1] + '">' + st[0] + "</span>" : "") + "</div>" +
       '<dl class="facts">' +
@@ -378,7 +379,7 @@
       (e.why ? '<p class="why"><b>Why go:</b> ' + esc(e.why) + "</p>" : "") +
       (e.region !== "bandung" && e.worth !== "yes" && e.worth_reason ? '<p class="trip">' + esc(e.worth_reason) + "</p>" : "") +
       '<div class="actions">' +
-        (book ? '<a class="btn primary" href="' + esc(book) + '" target="_blank" rel="noopener">' + ICON.ticket + "Book ticket</a>" : '<span class="btn primary" aria-disabled="true">' + ICON.ticket + "No booking link</span>") +
+        (book ? '<a class="btn primary" href="' + esc(book) + '" target="_blank" rel="noopener">' + ICON.ticket + (e.access === "apply" ? "Apply" : "Book ticket") + "</a>" : '<span class="btn primary" aria-disabled="true">' + ICON.ticket + "No booking link</span>") +
         (maps ? '<a class="btn" href="' + esc(maps) + '" target="_blank" rel="noopener">' + ICON.pin + "Directions</a>" : "") +
         (org ? '<a class="btn" href="' + esc(org) + '" target="_blank" rel="noopener">' + ICON.org + "Organizer</a>" : "") +
       "</div>" +
@@ -396,6 +397,7 @@
           "<dt>Ticket</dt><dd>" + val(e.price) + "</dd>" +
           "<dt>Book here</dt><dd>" + link(book) + "</dd>" +
           "<dt>Registration deadline</dt><dd>" + val(e.deadline) + "</dd>" +
+          "<dt>Who can join</dt><dd>" + (e.access === "apply" ? "Anyone can apply; organizer selects" + (e.access_note ? ". " + esc(e.access_note) : "") : e.access === "open" ? "Open to anyone who registers" : val("")) + "</dd>" +
           "<dt>Contact</dt><dd>" + val(e.contact) + "</dd>" +
           "<dt>Verified</dt><dd>" + val(e.verified_note) + "</dd>" +
           "<dt>All links</dt><dd>" + (links.length ? '<ul class="links">' + links.map(function (l) { return "<li>" + link(l.url, l.label) + "</li>"; }).join("") + "</ul>" : val("")) + "</dd>" +

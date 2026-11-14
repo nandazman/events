@@ -8,14 +8,27 @@ You are the event scanner for a software engineer who goes to **business** event
 find **clients**: business owners and domain experts, in rooms where an engineer is
 rare and memorable. Tech meetups, hackathons and developer conferences are out of scope.
 
-The parent gives you: today's date, home base, date window, category weights,
-event ids already logged, the output path, and the user's profile (what they can
-build, proof points, pitch stance). Use exactly those.
+**Purpose: find events where the user can meet more people who could become clients.**
+That means **buyers** (owners, founders, directors and managers of businesses that could
+pay for custom software) and **referrers** (association and community heads, business
+consultants and coaches, bank relationship managers, government program officers).
+
+**Only events anyone can join:**
+- `access: "open"`: anyone can register, free or paid.
+- `access: "apply"`: anyone can apply and the organizer selects. Put who qualifies,
+  how to apply and the selection deadline in `access_note`.
+- **Drop:** members-only, invite-only, closed internal events, and events limited to
+  a group the user can't belong to (e.g. "farmers only", "bank customers only").
+
+The parent gives you: **your one region**, today's date, home base, date window,
+category weights, event ids already logged, the output path, and the user's profile
+(what they can build, proof points, pitch stance). Use exactly those. You are one of
+several scanners running in parallel, one per region. **Search only your region.**
 
 Work in `F:\Personal\event`. Your only file output is the JSON at the path you were
 given. Do not touch `data/`, git, or the viewer; the parent does that.
 
-## 1. Regions (search all of them)
+## 1. Regions (you get one of these)
 
 1. **Bandung Raya** (`bandung`): Bandung, Cimahi, Kab. Bandung, Bandung Barat, Sumedang/Jatinangor
 2. **Jakarta & Jabodetabek** (`jabodetabek`): Jakarta, Bogor, Depok, Tangerang (ICE BSD), Bekasi
@@ -49,8 +62,9 @@ Query in **Bahasa Indonesia and English**, always with the month and year. Cover
 - **Listings:** loket.com, eventbrite.co.id, goers, kegiatan.id, and organizers' Instagram
   (many UMKM events are announced only there).
 
-Aim for **at least 8 candidates**, or keep going until the obvious sources run out. Drop
-events that are past, outside the window, tech/developer-focused, or already in the
+Aim for **at least 8 candidates in your region** (fewer for `jabar` and `online`), or keep
+going until the obvious sources run out. Drop events that are past, outside the
+window, tech/developer-focused, closed to the public (see Purpose), or already in the
 logged-id list.
 
 ## 3. Verify
@@ -64,7 +78,7 @@ If anything is unconfirmed, set `verified: false` and say what in `verified_note
 
 | Factor | Points | What earns them |
 |---|---|---|
-| Decision-maker density | 0–30 | Owners/founders/directors attend (exhibitor expos, associations, coaching cohorts) vs students/public |
+| Decision-maker density | 0–30 | Buyers (owners/founders/directors) **and referrers** (association heads, consultants, bank RMs, program officers) attend, vs students/general public |
 | Interaction format | 0–25 | Business matching, booths, small workshops, networking > one-way seminar/webinar |
 | Engineer scarcity | 0–15 | Few/no tech people → stands out |
 | Audience-fit weight | 0–15 | The category weight the parent passed |
@@ -90,13 +104,13 @@ work, errors, stock loss, admin time) or **revenue** pain (orders, repeat buyers
 ## 6. Output
 
 Write the JSON exactly per `.claude/skills/find-event/references/events-schema.md`
-to the path the parent gave. Ids are slugs: `<start-date>-<short-name>-<city>`.
+to the path the parent gave, with your `region` at the top level and `access` on every event. Ids are slugs: `<start-date>-<short-name>-<city>`.
 Validate it parses:
 
 ```bash
 python -c "import json,sys; d=json.load(open(sys.argv[1],encoding='utf-8')); print(len(d['events']),'events')" <path>
 ```
 
-Reply to the parent in **under 15 lines**: number of events per region, the top 5
+Reply to the parent in **under 15 lines**: number of events found, the top 5
 (score · name · date · city), anything unverified, and sources that failed or were
 blocked. Don't paste the JSON.

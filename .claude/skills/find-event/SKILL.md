@@ -5,8 +5,31 @@ description: Find the nearest worthwhile business events (UMKM/SME, export-impor
 
 # Find Event: finding clients at business events
 
-**Goal:** the user is a software engineer looking for **clients**, not tech friends.
-They want rooms full of business owners and domain experts, where an engineer is rare.
+## Purpose (read this first)
+
+**The purpose is to meet more people who could become clients.** The user is a
+software engineer who builds custom business software. They go to business events,
+not tech events, to meet business owners and domain experts in rooms where an engineer
+is rare and memorable. Every scan, score and prep note serves that one goal.
+
+**Who counts as a potential client:**
+- **Buyers:** owners, founders, directors and managers of businesses that could pay
+  for custom software (UMKM/SME, exporters/importers, factories, property, franchise).
+- **Referrers:** people who can introduce the user to buyers: association and
+  community heads (HIPMI, KADIN, TDA, IWAPI, API), business consultants and coaches,
+  bank relationship managers, and government program officers (Dinas KUKM, Kemendag, BI).
+
+**Only events anyone can join:**
+- **`open`:** anyone can register, free or paid. Always in scope.
+- **`apply`:** anyone can apply, and the organizer selects (coaching cohorts,
+  business matching, curated programs). In scope, flagged "Apply, selection", with
+  who qualifies and the deadline in `access_note`.
+- **Out of scope:** members-only, invite-only, closed internal events, and any event
+  that only accepts a group the user can't belong to (e.g. "farmers only").
+
+If a request is ambiguous about any of this (who counts as a lead, whether an event
+type is in scope, a new city), **ask the user questions with AskUserQuestion before
+scanning. Ask as many as needed;** don't guess.
 
 Work from `F:\Personal\event`. Read first:
 
@@ -30,30 +53,49 @@ Work from `F:\Personal\event`. Read first:
 
 ## Mode: Find
 
-### 1. Dispatch the scanner subagent
+### 1. Dispatch one scanner subagent per location (every run)
 
-The web search runs in the **`event-scanner` subagent** (`.claude/agents/event-scanner.md`),
-so the many pages it reads stay out of this conversation. Spawn it with the Agent tool,
-`subagent_type: "event-scanner"`. Run it in the background, and wait for the
-completion notification rather than polling. Give it in the prompt:
+**Every run spawns a separate `event-scanner` subagent for each location, all in
+parallel**, so each region gets a full search and their pages stay out of this
+conversation. Send all four Agent calls in **one message**, with
+`subagent_type: "event-scanner"` and `run_in_background: true`:
 
+| Region | Covers | Output |
+|---|---|---|
+| `bandung` | Bandung, Cimahi, Kab. Bandung, Bandung Barat, Sumedang/Jatinangor | `scans/<today>/bandung.json` |
+| `jabodetabek` | Jakarta, Bogor, Depok, Tangerang, Bekasi | `scans/<today>/jabodetabek.json` |
+| `jabar` | Other West Java: major expos and business matching only | `scans/<today>/jabar.json` |
+| `online` | Online events, only when clearly useful | `scans/<today>/online.json` |
+
+If the user named another home base, center the four regions on it. If they asked
+for only one region, spawn only that one. Give **each** scanner in its prompt:
+
+- **its region** (search only that one) and its output path
 - today's date and the window: today → +30 days, unless the user gave another
 - home base: Bandung, unless the user named another city
+- the Purpose section above: who counts as a potential client, open/apply only
 - the category weights table from `data/debriefs.md`, plus its Learnings section
 - every `id` already in `data/events.md`, so it skips repeats
 - the full text of `data/profile.md`, which the prep needs
-- output path: `scans/<today>/events.json`
 - any event the user asked prep for
 
-If the user asked for a narrower search (one category, one city), say so in the prompt.
+While they run, tell the user in one line that four scanners are running. Wait for
+**all** completion notifications rather than polling, then merge:
 
-While it runs, tell the user in one line that the scan is running.
+```bash
+python .claude/skills/find-event/scripts/merge_scans.py scans/<today>
+```
+
+That writes `scans/<today>/events.json`, drops duplicates and notes missing regions.
 
 ### 2. Check the result
 
-When it returns, load `scans/<today>/events.json` and confirm it parses and every event
-has `id, name, score, region, category, start`. If it's missing or broken, tell the
-user and re-dispatch once with the error. Never fill gaps yourself from memory.
+Load the merged `scans/<today>/events.json` and confirm every event has
+`id, name, score, region, category, access`. `start` may be `""` only when the
+organizer hasn't published a date. If a region's file is missing or broken, tell the
+user and re-dispatch **that region's** scanner once with the error, then merge again.
+Never fill gaps yourself from memory. Drop any event that is members-only or
+invite-only.
 
 Also list events from `data/events.md` with status `shown` whose date is still
 upcoming, as "Still open from last time" (one line each).
@@ -64,7 +106,8 @@ English; event names stay in their original language.
 
 1. Summary table: `# | Event | Date | City | Category | Price | Score | Worth trip`
 2. The **top 3** as short cards: name · score · date/time · venue · organizer ·
-   target audience · ticket + **book link** · why it's worth it
+   target audience · who can join (open / apply) · ticket + **book link** ·
+   which buyers and referrers will be there
 3. Count of the rest by region, plus any unverified ones
 4. Links to the viewer (local `scans/viewer.html`) and the public site
    (https://nandazman.github.io/events/)

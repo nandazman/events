@@ -6,6 +6,7 @@ The viewer (`assets/viewer.template.html`) reads exactly these keys. Unknown →
 ```jsonc
 {
   "date": "2026-11-14",                 // scan date
+  "region": "bandung",                  // only in per-region files (scans/<date>/<region>.json); dropped on merge
   "home": "Bandung",                    // home base used for distance
   "window": { "from": "2026-11-14", "to": "2026-12-14" },
   "sources": "WebSearch 24 queries · 31 pages read",  // one line, how the scan was done
@@ -38,6 +39,8 @@ The viewer (`assets/viewer.template.html`) reads exactly these keys. Unknown →
       "speakers": "Notable speakers or exhibitor count",
       "price": "Free (register) / Rp 150.000 regular, Rp 100.000 early bird",
       "price_flag": false,              // true when > Rp 500k
+      "access": "open",                 // "open" = anyone can register | "apply" = anyone can apply, organizer selects
+      "access_note": "",                // for "apply": who qualifies, how to apply, selection deadline
       "book_url": "https://...",        // registration / ticket page
       "contact": "WA 0812-xxxx (panitia), email",
       "links": [ { "label": "Official page", "url": "https://..." },
