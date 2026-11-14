@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Build a single self-contained scans/viewer.html from find-event output.
 
-Opens offline (file://): no server, no CDN. Embeds as JSON:
+Opens offline (file://): no server, no scripts from a CDN. Fonts load from Google Fonts
+when online and fall back to system fonts offline. Embeds as JSON:
   * every scans/<YYYY-MM-DD>/events.json (newest first)
   * data/events.md   (the log; its status column also drives the pills on each card)
   * data/debriefs.md (post-event feedback and category weights)
