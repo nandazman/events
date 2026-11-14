@@ -1,0 +1,13 @@
+# Private: profile, event log, debriefs (leads' names and WhatsApp numbers). Never publish.
+data/
+
+# Private viewer embeds the log + debriefs
+scans/viewer.html
+
+# Third-party skills (reinstall from skills-lock.json: npx skills@latest experimental_install)
+.agents/
+.claude/skills/*
+!.claude/skills/find-event/
+
+# Local Claude settings
+.claude/settings.local.json
